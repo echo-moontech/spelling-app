@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="单词拼写">
+    <title>单词拼写练习</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+        .app-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 25px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 22px;
+        }
+        .install-prompt {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+            display: none;
+        }
+        .install-prompt button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .grade-selector {
+            margin-bottom: 15px;
+        }
+        .grade-selector label {
+            display: block;
+            margin-bottom: 6px;
+            color: #666;
+            font-size: 13px;
+        }
+        .grade-buttons {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+        .grade-btn {
+            padding: 8px 4px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-size: 11px;
+            transition: all 0.2s;
+        }
+        .grade-btn:hover {
+            border-color: #667eea;
+            background: #f5f5ff;
+        }
+        .grade-btn.active {
+            border-color: #667eea;
+            background: #667eea;
+            color: white;
+        }
+        .grade-section {
+            font-size: 11px;
+            color: #999;
+            text-align: center;
+            margin-top: 5px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .grade-section span {
+            cursor: pointer;
+            padding: 2px 10px;
+            border-radius: 10px;
+        }
+        .grade-section span.active {
+            background: #667eea;
+            color: white;
+        }
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+        .stat {
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 22px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            font-size: 10px;
+            color: #666;
+            margin-top: 2px;
+        }
+        .word-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+        .word-meaning {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        .word-hint {
+            font-size: 12px;
+            color: #888;
+        }
+        .word-grade {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+        .input-section {
+            margin-bottom: 12px;
+        }
+        #wordInput {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 16px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            transition: border-color 0.3s;
+        }
+        #wordInput:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            font-size: 15px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-bottom: 8px;
+        }
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+        }
+        .result {
+            text-align: center;
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+            display: none;
+        }
+        .result.correct {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .result.wrong {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .result-word {
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 12px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            padding: 4px;
+        }
+        .tab {
+            flex: 1;
+            padding: 8px;
+            text-align: center;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.3s;
+            font-size: 13px;
+        }
+        .tab.active {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .wrong-list {
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .wrong-item {
+            padding: 10px;
+            background: #fff5f5;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            border-left: 4px solid #e74c3c;
+        }
+        .wrong-word {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        .wrong-meaning {
+            font-size: 12px;
+            color: #666;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 25px;
+            color: #999;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 5px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s;
+        }
+        .word-count {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+        }
+        .offline-indicator {
+            text-align: center;
+            font-size: 11px;
+            color: #999;
+            margin-bottom: 10px;
+        }
+        .offline-indicator.offline {
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <h1>📝 单词拼写练习</h1>
+        
+        <div class="install-prompt" id="installPrompt">
+            <div>📱 添加到主屏幕，像APP一样使用</div>
+            <button onclick="installPWA()">立即安装</button>
+            <button onclick="dismissInstall()" style="background: transparent; color: white; margin-left: 5px;">稍后</button>
+        </div>
+        
+        <div class="offline-indicator" id="offlineIndicator">
+            <span id="offlineText">✓ 可离线使用</span>
+        </div>
+        
+        <div class="grade-selector">
+            <label>选择年级：</label>
+            <div class="grade-buttons" id="gradeButtons"></div>
+            <div class="grade-section" id="gradeSectionTabs">
+                <span class="active" onclick="filterBySection('primary')">小学</span>
+                <span onclick="filterBySection('middle')">初中</span>
+                <span onclick="filterBySection('high')">高中</span>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('practice')">练习</div>
+            <div class="tab" onclick="switchTab('wrong')">错题本</div>
+        </div>
+        
+        <div id="practiceTab">
+            <div class="stats">
+                <div class="stat">
+                    <div class="stat-value" id="correctCount">0</div>
+                    <div class="stat-label">正确</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="totalCount">0</div>
+                    <div class="stat-label">总计</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value" id="accuracy">0%</div>
+                    <div class="stat-label">正确率</div>
+                </div>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            
+            <div class="word-card">
+                <div class="word-grade" id="wordGrade">小学一年级</div>
+                <div class="word-meaning" id="wordMeaning">加载中...</div>
+                <div class="word-hint" id="wordHint"></div>
+            </div>
+            
+            <div class="result" id="result">
+                <div class="result-word" id="resultWord"></div>
+                <div id="resultText"></div>
+            </div>
+            
+            <div class="input-section">
+                <input type="text" id="wordInput" placeholder="输入单词拼写..." autocomplete="off" autocapitalize="none" spellcheck="false">
+            </div>
+            
+            <button class="btn btn-primary" onclick="checkAnswer()">检查答案</button>
+            <button class="btn btn-secondary" onclick="nextWord()">下一个单词</button>
+            
+            <div class="word-count" id="wordCount"></div>
+        </div>
+        
+        <div id="wrongTab" style="display: none;">
+            <div class="wrong-list" id="wrongList">
+                <div class="empty-state">暂无错题记录</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="words.js"></script>
+    <script>
+        // PWA 安装
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('installPrompt').style.display = 'block';
+        });
+
+        function installPWA() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choice => {
+                    if (choice.outcome === 'accepted') {
+                        document.getElementById('installPrompt').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        function dismissInstall() {
+            document.getElementById('installPrompt').style.display = 'none';
+        }
+
+        // 离线检测
+        window.addEventListener('online', updateOnlineStatus);
+        window.addEventListener('offline', updateOnlineStatus);
+        
+        function updateOnlineStatus() {
+            const indicator = document.getElementById('offlineIndicator');
+            const text = document.getElementById('offlineText');
+            if (navigator.onLine) {
+                indicator.classList.remove('offline');
+                text.textContent = '✓ 可离线使用';
+            } else {
+                indicator.classList.add('offline');
+                text.textContent = '⚠ 当前离线';
+            }
+        }
+        updateOnlineStatus();
+
+        // 注册 Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('Service Worker 注册成功'))
+                    .catch(err => console.log('Service Worker 注册失败:', err));
+            });
+        }
+
+        // 学段筛选
+        let currentSection = 'primary';
+        
+        function filterBySection(section) {
+            currentSection = section;
+            document.querySelectorAll('#gradeSectionTabs span').forEach(s => s.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const ranges = {
+                'primary': [1, 2, 3, 4, 5, 6],
+                'middle': [7, 8, 9],
+                'high': [10, 11, 12]
+            };
+            
+            const validGrades = ranges[section];
+            if (!validGrades.includes(currentGrade)) {
+                selectGrade(validGrades[0]);
+            }
+        }
+
+        const gradeNames = {
+            1: "小学一年级", 2: "小学二年级", 3: "小学三年级",
+            4: "小学四年级", 5: "小学五年级", 6: "小学六年级",
+            7: "初一", 8: "初二", 9: "初三",
+            10: "高一", 11: "高二", 12: "高三"
+        };
+
+        let currentGrade = 1;
+        let currentWord = null;
+        let correctCount = 0;
+        let totalCount = 0;
+        let wrongWords = [];
+        let usedIndices = [];
+
+        // 初始化
+        function init() {
+            renderGradeButtons();
+            loadStats();
+            loadWrongWords();
+            selectGrade(currentGrade);
+            
+            document.getElementById('wordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    checkAnswer();
+                }
+            });
+        }
+
+        // 渲染年级按钮
+        function renderGradeButtons() {
+            const container = document.getElementById('gradeButtons');
+            let html = '';
+            for (let i = 1; i <= 12; i++) {
+                html += `<button class="grade-btn" data-grade="${i}" onclick="selectGrade(${i})">${i}</button>`;
+            }
+            container.innerHTML = html;
+        }
+
+        // 选择年级
+        function selectGrade(grade) {
+            currentGrade = grade;
+            usedIndices = [];
+            
+            document.querySelectorAll('.grade-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (parseInt(btn.dataset.grade) === grade) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            const wordCount = wordDatabase[grade] ? wordDatabase[grade].length : 0;
+            document.getElementById('wordCount').textContent = `当前词库：${wordCount} 个单词`;
+            
+            nextWord();
+        }
+
+        // 切换标签
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (tab === 'practice') {
+                document.getElementById('practiceTab').style.display = 'block';
+                document.getElementById('wrongTab').style.display = 'none';
+            } else {
+                document.getElementById('practiceTab').style.display = 'none';
+                document.getElementById('wrongTab').style.display = 'block';
+                renderWrongList();
+            }
+        }
+
+        // 下一个单词
+        function nextWord() {
+            const words = wordDatabase[currentGrade];
+            if (!words || words.length === 0) {
+                document.getElementById('wordMeaning').textContent = '词库加载中...';
+                return;
+            }
+            
+            if (usedIndices.length >= words.length) {
+                usedIndices = [];
+            }
+            
+            let index;
+            let attempts = 0;
+            do {
+                index = Math.floor(Math.random() * words.length);
+                attempts++;
+                if (attempts > 100) break;
+            } while (usedIndices.includes(index));
+            
+            usedIndices.push(index);
+            currentWord = words[index];
+            
+            document.getElementById('wordGrade').textContent = gradeNames[currentGrade];
+            document.getElementById('wordMeaning').textContent = currentWord.meaning;
+            document.getElementById('wordHint').textContent = currentWord.hint;
+            document.getElementById('wordInput').value = '';
+            document.getElementById('result').className = 'result';
+            document.getElementById('result').style.display = 'none';
+            
+            document.getElementById('wordInput').focus();
+        }
+
+        // 检查答案
+        function checkAnswer() {
+            const input = document.getElementById('wordInput').value.trim().toLowerCase();
+            const resultDiv = document.getElementById('result');
+            
+            if (!input) {
+                alert('请输入单词！');
+                return;
+            }
+            
+            if (!currentWord) {
+                alert('单词未加载，请刷新页面！');
+                return;
+            }
+            
+            totalCount++;
+            
+            if (input === currentWord.word.toLowerCase()) {
+                correctCount++;
+                resultDiv.className = 'result correct';
+                document.getElementById('resultWord').textContent = '✓ ' + currentWord.word;
+                document.getElementById('resultText').textContent = '回答正确！';
+                
+                const wrongIndex = wrongWords.findIndex(w => w.word === currentWord.word && w.grade === currentGrade);
+                if (wrongIndex !== -1) {
+                    wrongWords.splice(wrongIndex, 1);
+                    saveWrongWords();
+                }
+            } else {
+                resultDiv.className = 'result wrong';
+                document.getElementById('resultWord').textContent = '✗ ' + currentWord.word;
+                document.getElementById('resultText').textContent = `你输入的是: ${input}`;
+                
+                if (!wrongWords.find(w => w.word === currentWord.word && w.grade === currentGrade)) {
+                    wrongWords.push({
+                        word: currentWord.word,
+                        meaning: currentWord.meaning,
+                        grade: currentGrade,
+                        gradeName: gradeNames[currentGrade],
+                        input: input,
+                        time: new Date().toLocaleString()
+                    });
+                    saveWrongWords();
+                }
+            }
+            
+            updateStats();
+        }
+
+        // 更新统计
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('totalCount').textContent = totalCount;
+            
+            const accuracy = totalCount > 0 ? Math.round((correctCount / totalCount) * 100) : 0;
+            document.getElementById('accuracy').textContent = accuracy + '%';
+            document.getElementById('progressFill').style.width = accuracy + '%';
+            
+            saveStats();
+        }
+
+        // 保存/加载统计
+        function saveStats() {
+            localStorage.setItem('spellingStats', JSON.stringify({
+                correctCount,
+                totalCount,
+                currentGrade
+            }));
+        }
+
+        function loadStats() {
+            const stats = localStorage.getItem('spellingStats');
+            if (stats) {
+                const data = JSON.parse(stats);
+                correctCount = data.correctCount || 0;
+                totalCount = data.totalCount || 0;
+                currentGrade = data.currentGrade || 1;
+                updateStats();
+            }
+        }
+
+        // 保存/加载错题本
+        function saveWrongWords() {
+            localStorage.setItem('wrongWords', JSON.stringify(wrongWords));
+        }
+
+        function loadWrongWords() {
+            const saved = localStorage.getItem('wrongWords');
+            if (saved) {
+                wrongWords = JSON.parse(saved);
+            }
+        }
+
+        // 渲染错题列表
+        function renderWrongList() {
+            const container = document.getElementById('wrongList');
+            
+            if (wrongWords.length === 0) {
+                container.innerHTML = '<div class="empty-state">暂无错题记录<br>继续加油！💪</div>';
+                return;
+            }
+            
+            container.innerHTML = wrongWords.map(item => `
+                <div class="wrong-item">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <span class="wrong-word">${item.word}</span>
+                        <span style="font-size: 10px; background: #667eea; color: white; padding: 2px 6px; border-radius: 8px;">${item.gradeName || '未知'}</span>
+                    </div>
+                    <div class="wrong-meaning">${item.meaning}</div>
+                    <div class="wrong-meaning" style="color: #e74c3c; margin-top: 3px;">
+                        你曾输入: ${item.input}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 启动应用
+        init();
+    </script>
+</body>
+</html>
