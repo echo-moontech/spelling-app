@@ -644,7 +644,7 @@
                 resultDiv.className = 'result wrong';
                 document.getElementById('resultWord').textContent = '✗ ' + currentWord.word;
                 document.getElementById('resultText').textContent = `你输入的是: ${inputRaw}`;
-                document.getElementById('resultDetail').textContent = '💡 修改后回车重试，或点"下一题"继续';
+                document.getElementById('resultDetail').textContent = '💡 记住正确拼写后，点击"下一题"继续';
 
                 // 加入错题本
                 if (!wrongWords.find(w =>
@@ -662,12 +662,10 @@
                     updateWrongCount();
                 }
 
-                // 禁用检查按钮，显示下一题按钮，让用户选择
+                // 禁用检查按钮，显示下一题按钮，让用户有充足时间记词
                 hideCheckBtn();
                 showNextBtn();
-                showCountdown();
-                // 答错也3秒后自动跳下一题（避免卡住）
-                startAutoNext(3000);
+                // 答错时不自动跳转，必须手动点击"下一题"
             }
 
             updateStats();
