@@ -164,15 +164,22 @@
         .word-image {
             width: 120px;
             height: 120px;
-            object-fit: contain;
             margin-bottom: 10px;
             align-self: center;
             border-radius: 12px;
             background: white;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             display: none;
+            justify-content: center;
+            align-items: center;
         }
-        .word-image.show { display: block; }
+        .word-image.show { display: flex; }
+        .word-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
         .word-meaning {
             font-size: 20px;
             color: #333;
@@ -381,7 +388,10 @@
 
             <div class="word-card">
                 <div class="word-grade" id="wordGrade">小学一年级</div>
-                <img id="wordImage" class="word-image" alt="单词配图" onerror="this.classList.remove('show')">
+                <div id="wordImage" class="word-image" style="display:none;">
+                    <img id="cartoonImg" alt="单词配图" onerror="showEmojiFallback()">
+                    <span id="emojiImg" style="font-size:96px;line-height:1;display:none;"></span>
+                </div>
                 <div class="word-meaning" id="wordMeaning">加载中...</div>
                 <div class="word-hint" id="wordHint"></div>
             </div>
@@ -411,6 +421,7 @@
     </div>
 
     <script src="words.js"></script>
+    <script src="emojiMap.js"></script>
     <script>
         // ====== PWA 安装 ======
         let deferredPrompt;
@@ -608,12 +619,38 @@
             document.getElementById('wordInput').value = '';
             document.getElementById('wordInput').focus();
 
-            // 显示单词配图（如果该单词有对应图片）
-            const img = document.getElementById('wordImage');
-            const imgPath = 'images/' + currentWord.word.toLowerCase() + '.png';
-            img.onerror = () => img.classList.remove('show');
-            img.src = imgPath;
-            img.classList.add('show');
+            // 显示单词配图（优先卡通图，失败则 emoji 兜底）
+            const container = document.getElementById('wordImage');
+            const cartoonImg = document.getElementById('cartoonImg');
+            const emojiImg = document.getElementById('emojiImg');
+            const wordLower = currentWord.word.toLowerCase();
+            
+            container.style.display = 'none';
+            emojiImg.style.display = 'none';
+            cartoonImg.style.display = 'none';
+            
+            // 先尝试加载卡通图
+            cartoonImg.src = 'images/' + wordLower + '.png';
+        }
+
+        // 卡通图加载失败，改用 emoji 兜底
+        function showEmojiFallback() {
+            const wordLower = currentWord.word.toLowerCase();
+            const container = document.getElementById('wordImage');
+            const cartoonImg = document.getElementById('cartoonImg');
+            const emojiImg = document.getElementById('emojiImg');
+            
+            cartoonImg.style.display = 'none';
+            
+            // 检查是否有 emoji 映射
+            const emoji = emojiMap[wordLower];
+            if (emoji) {
+                emojiImg.textContent = emoji;
+                emojiImg.style.display = 'block';
+                container.style.display = 'flex';
+            } else {
+                container.style.display = 'none';
+            }
         }
 
         // ====== 检查答案 ======
