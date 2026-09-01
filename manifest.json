@@ -2,7 +2,7 @@
   "name": "单词拼写练习",
   "short_name": "单词拼写",
   "description": "小学到高中英语单词拼写练习应用",
-  "start_url": "/index.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#667eea",
   "theme_color": "#667eea",
