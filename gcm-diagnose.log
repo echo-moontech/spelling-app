@@ -1,0 +1,215 @@
+﻿Diagnose log at 2026-09-01T01:37:48Z
+
+AppPath: C:\Users\Administrator\AppData\Local\GitHubDesktop\app-3.6.4\resources\app\git\mingw64\bin\git-credential-manager.exe
+InstallDir: C:\Users\Administrator\AppData\Local\GitHubDesktop\app-3.6.4\resources\app\git\mingw64\bin\
+Version: 2.9.0+194ba290ce533465310d50f811684ab180536ae7
+
+------------
+Diagnostic: Environment
+Skipped: False
+Success: True
+Exception: None
+Log:
+OSType: Windows
+OSVersion: 10.0 (build 26100)
+Reading environment variables... OK
+ Variables:
+QCLAW_PLUGIN_CONFIG_PATH=C:\Users\Administrator\AppData\Roaming\QClaw\qclaw-plugin-config.json
+ProgramFiles(x86)=C:\Program Files (x86)
+ProgramW6432=C:\Program Files
+OPENCLAW_NIX_MODE=1
+PROCESSOR_IDENTIFIER=Intel64 Family 6 Model 151 Stepping 5, GenuineIntel
+TMP=C:\Users\Administrator\AppData\Local\Temp
+PROCESSOR_ARCHITECTURE=AMD64
+QCLAW_DEVICE_ID=95c23da0be3da7138cdd0c336e884745678d181feb4253dcd8fdf284f7951290
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC;.CPL
+HOMEPATH=\Users\Administrator
+ACSetupSvcPort=23210
+QCLAW_LLM_BASE_URL=http://127.0.0.1:19000/proxy/llm
+OPENCLAW_NO_RESPAWN=1
+PROCESSOR_REVISION=9705
+TEMP=C:\Users\Administrator\AppData\Local\Temp
+USERPROFILE=C:\Users\Administrator
+LOGONSERVER=\\DESKTOP-RD7D8L3
+QCLAW_EXEC_PATH_PRIORITY=C:\Program Files\QClaw\v0.2.22.518\resources\openclaw\config\bin
+USERNAME=Administrator
+SystemRoot=C:\Windows
+CHROME_CRASHPAD_PIPE_NAME=\\.\pipe\crashpad_19380_GWYFAYNMDYSZZYLM
+QCLAW_NPM_GLOBAL_PREFIX=C:\Users\Administrator\AppData\Roaming\QClaw\npm-global
+QCLAW_WECHAT_WS_URL=wss://mmgrcalltoken.3g.qq.com/agentwss
+PATH=C:\Users\Administrator\AppData\Local\GitHubDesktop\app-3.6.4\resources\app\git\cmd;C:\Program Files\QClaw\v0.2.22.518;C:\Program Files\QClaw\v0.2.22.518\resources\openclaw\config\bin;C:\Program Files\QClaw\v0.2.22.518\resources\openclaw\config\npm-tools\node_modules\.bin;C:\Users\Administrator\.bun\bin;C:\Users\Administrator\AppData\Roaming\QClaw\npm-global;C:\Program Files\QClaw\v0.2.22.518\resources\vcruntime-dlls;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\dotnet\;C:\Users\Administrator\AppData\Local\Microsoft\WindowsApps;C:\Users\Administrator\AppData\Local\GitHubDesktop\bin
+QCLAW_USER_GUID=95c23da0be3da7138cdd0c336e884745678d181feb4253dcd8fdf284f7951290
+QCLAW_USER_TOKEN_ENCRYPTED=pJ6kfsj8R5K3QJDVbs6YlJCldU8pdXZqo763PymZIOjD+CNdnY1Ccz/hJN3IfhrDO5z5UqS4xpfTO6wmg7yLFNnIK8e6lLvnfatwklA0aJfOC5Ln6RE74vWZzvfJbtMbcah6L9dFdh6GZj7eGqCIplsqtQcyY/namsh6vLZwTFBiBmKaYND+y6y5LgxA1FsV+bz97UdpioV3F6xTllSxM0AWGeTAcJ7/h73JbcaTj7Aa8ky0LJ5CfC7YeYfL1t0CDkPaFt8SaC+IURShYJlOCxmlnoMvf8t/pov5K6+orc/9K9E6O1oGGpgOJzZKyvTXdmok2If0ClYmTA1JiFp5vJU5lM87v2l8nTOAeQkVKk0oOEpQQ3tKjysfrcnfZbo3E9DeD7s/idfxZgu5jjidj5DiWbdYhqgxYbWf0SUek3oVSdJVEWH4VLdcw7r2l79y
+CommonProgramFiles=C:\Program Files\Common Files
+windir=C:\Windows
+SystemDrive=C:
+BUILD_ENV=production
+QCLAW_CLI_OPENCLAW_MJS=C:\Program Files\QClaw\v0.2.22.518\resources\openclaw\node_modules\openclaw\openclaw.mjs
+QCLAW_CLI_NODE_BINARY=C:\Program Files\QClaw\v0.2.22.518\resources\node\node.exe
+ProgramData=C:\ProgramData
+RlsSvcPort=22112
+NODE_NO_WARNINGS=1
+COMPUTERNAME=DESKTOP-RD7D8L3
+OPENCLAW_STATE_DIR=C:\Users\Administrator\.qclaw
+ALLUSERSPROFILE=C:\ProgramData
+CommonProgramW6432=C:\Program Files\Common Files
+NODE_COMPILE_CACHE=C:\Users\Administrator\.qclaw\compile-cache
+OPENCLAW_PATH_BOOTSTRAPPED=1
+SESSIONNAME=Console
+DriverData=C:\Windows\System32\Drivers\DriverData
+HOMEDRIVE=C:
+QCLAW_NPX_CLI_JS=C:\Program Files\QClaw\v0.2.22.518\resources\openclaw\config\npm-tools\node_modules\npm\bin\npx-cli.js
+GIT_TRACE2_PARENT_SID=61386459-d12f-42db-ad1e-aa6dc72d5231
+QCLAW_LLM_API_KEY=__QCLAW_AUTH_GATEWAY_MANAGED__
+NUMBER_OF_PROCESSORS=12
+OS=Windows_NT
+OPENCLAW_CLI=1
+ProgramFiles=C:\Program Files
+ComSpec=C:\Windows\system32\cmd.exe
+USERDOMAIN_ROAMINGPROFILE=DESKTOP-RD7D8L3
+QCLAW_USER_ID=996173310
+PSModulePath=C:\Users\Administrator\Documents\WindowsPowerShell\Modules;C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+APPDATA=C:\Users\Administrator\AppData\Roaming
+USERDOMAIN=DESKTOP-RD7D8L3
+PROCESSOR_LEVEL=6
+QCLAW_CONFIG_HMAC_SECRET=qclaw-cfg-hmac-v1-8f3a2b7e9d1c4f6a
+LOCALAPPDATA=C:\Users\Administrator\AppData\Local
+QCLAW_NPM_CLI_JS=C:\Program Files\QClaw\v0.2.22.518\resources\openclaw\config\npm-tools\node_modules\npm\bin\npm-cli.js
+AUTH_GATEWAY_PORT=19000
+OPENCLAW_SHELL=exec
+EFC_7408=1
+CommonProgramFiles(x86)=C:\Program Files (x86)\Common Files
+OPENCLAW_GATEWAY_PORT=28789
+OPENCLAW_CONFIG_PATH=C:\Users\Administrator\.qclaw\openclaw.json
+PUBLIC=C:\Users\Public
+OPENCLAW_DISABLE_BONJOUR=1
+
+
+------------
+Diagnostic: File system
+Skipped: False
+Success: True
+Exception: None
+Log:
+Temporary directory is 'C:\Users\Administrator\AppData\Local\Temp\'...
+Checking basic file I/O...
+Writing to temporary file 'C:\Users\Administrator\AppData\Local\Temp\27694d1f9a5956cad82a1c6f'... OK
+Reading from temporary file 'C:\Users\Administrator\AppData\Local\Temp\27694d1f9a5956cad82a1c6f'... OK
+Deleting temporary file 'C:\Users\Administrator\AppData\Local\Temp\27694d1f9a5956cad82a1c6f'... OK
+Testing IFileSystem instance...
+UserHomePath: C:\Users\Administrator
+UserDataDirectoryPath: C:\Users\Administrator\.gcm
+GetCurrentDirectory(): C:\Users\Administrator\Documents\GitHub\spelling-app
+
+------------
+Diagnostic: Networking
+Skipped: False
+Success: True
+Exception: None
+Log:
+Checking networking and HTTP stack...
+Creating HTTP client... OK
+IsNetworkAvailable: True
+Sending HEAD request to http://example.com... OK
+Sending HEAD request to https://example.com... OK
+Acquiring free TCP port... OK
+Testing local HTTP loopback connections...
+Creating new HTTP listener for http://localhost:54586/... OK
+Waiting for loopback connection... OK
+Writing response... OK
+Waiting for response data... OK
+Loopback connection data OK
+
+------------
+Diagnostic: Git
+Skipped: False
+Success: True
+Exception: None
+Log:
+Getting Git version... OK
+Git version is '2.53.0.windows.4'
+Locating current repository...Git repository at 'C:/Users/Administrator/Documents/GitHub/spelling-app/.git'
+ OK
+Listing all Git configuration... OK
+Git configuration:
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	core.symlinks=false
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	core.autocrlf=true
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	core.fscache=true
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	color.interactive=true
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	color.ui=auto
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	pack.packsizelimit=2g
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	help.format=html
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	diff.astextplain.textconv=astextplain
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	rebase.autosquash=true
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	filter.lfs.clean=git-lfs clean -- %f
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	filter.lfs.smudge=git-lfs smudge -- %f
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	filter.lfs.process=git-lfs filter-process
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	filter.lfs.required=true
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	credential.helper=manager
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	http.sslbackend=schannel
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	http.schannelusesslcainfo=false
+file:C:/Users/Administrator/AppData/Local/GitHubDesktop/app-3.6.4/resources/app/git/etc/gitconfig	credential.https://dev.azure.com.usehttppath=true
+file:C:/Users/Administrator/.gitconfig	filter.lfs.clean=git-lfs clean -- %f
+file:C:/Users/Administrator/.gitconfig	filter.lfs.smudge=git-lfs smudge -- %f
+file:C:/Users/Administrator/.gitconfig	filter.lfs.process=git-lfs filter-process
+file:C:/Users/Administrator/.gitconfig	filter.lfs.required=true
+file:C:/Users/Administrator/.gitconfig	user.name=echo-moontech
+file:C:/Users/Administrator/.gitconfig	user.email=echo@ahmoontech.com
+file:C:/Users/Administrator/.gitconfig	credential.helper=C:\Users\Administrator\AppData\Local\GitHubDesktop\app-3.6.4\resources\app\git\mingw64\bin\git-credential-manager.exe
+file:.git/config	core.repositoryformatversion=0
+file:.git/config	core.filemode=false
+file:.git/config	core.bare=false
+file:.git/config	core.logallrefupdates=true
+file:.git/config	core.symlinks=false
+file:.git/config	core.ignorecase=true
+file:.git/config	lfs.repositoryformatversion=0
+file:.git/config	remote.origin.url=https://github.com/echo-moontech/spelling-app.git
+file:.git/config	remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+file:.git/config	branch.main.remote=origin
+file:.git/config	branch.main.merge=refs/heads/main
+
+
+------------
+Diagnostic: Credential storage
+Skipped: False
+Success: True
+Exception: None
+Log:
+ICredentialStore instance is of type: CredentialStore
+Writing test credential... OK
+Reading test credential... OK
+Deleting test credential... OK
+
+------------
+Diagnostic: Microsoft authentication (AAD/MSA)
+Skipped: False
+Success: True
+Exception: None
+Log:
+Broker is not enabled.
+Gathering MSAL token cache data... OK
+CacheDirectory: C:\Users\Administrator\AppData\Local\.IdentityService
+CacheFileName: msal.cache
+CacheFilePath: C:\Users\Administrator\AppData\Local\.IdentityService\msal.cache
+Creating cache helper... OK
+Verifying MSAL token cache persistence... OK
+
+------------
+Diagnostic: GitHub API
+Skipped: False
+Success: False
+Exception:
+System.Net.Http.HttpRequestException: 响应状态代码不指示成功: 403 (rate limit exceeded)。
+   在 System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode()
+   在 GitHub.GitHubRestApi.<GetMetaInfoAsync>d__5.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 GitHub.Diagnostics.GitHubApiDiagnostic.<RunInternalAsync>d__2.MoveNext()
+--- 引发异常的上一位置中堆栈跟踪的末尾 ---
+   在 System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   在 System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   在 GitCredentialManager.Diagnostics.Diagnostic.<RunAsync>d__6.MoveNext()
+Log:
+Using 'https://github.com/' as API target.
+Querying '/meta' endpoint...
