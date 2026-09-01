@@ -161,6 +161,18 @@
             margin-bottom: 8px;
             align-self: center;
         }
+        .word-image {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+            margin-bottom: 10px;
+            align-self: center;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .word-image.show { display: block; }
         .word-meaning {
             font-size: 20px;
             color: #333;
@@ -369,6 +381,7 @@
 
             <div class="word-card">
                 <div class="word-grade" id="wordGrade">小学一年级</div>
+                <img id="wordImage" class="word-image" alt="单词配图" onerror="this.classList.remove('show')">
                 <div class="word-meaning" id="wordMeaning">加载中...</div>
                 <div class="word-hint" id="wordHint"></div>
             </div>
@@ -594,6 +607,13 @@
             document.getElementById('wordHint').textContent = currentWord.hint;
             document.getElementById('wordInput').value = '';
             document.getElementById('wordInput').focus();
+
+            // 显示单词配图（如果该单词有对应图片）
+            const img = document.getElementById('wordImage');
+            const imgPath = 'images/' + currentWord.word.toLowerCase() + '.png';
+            img.onerror = () => img.classList.remove('show');
+            img.src = imgPath;
+            img.classList.add('show');
         }
 
         // ====== 检查答案 ======
