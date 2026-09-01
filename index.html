@@ -180,6 +180,57 @@
             object-fit: contain;
             border-radius: 12px;
         }
+        .pronounce-controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .btn-pronounce {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 9px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+        .btn-pronounce:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(102,126,234,0.4); }
+        .btn-pronounce:active { transform: scale(0.95); }
+        .btn-pronounce:disabled { opacity: 0.6; cursor: default; transform: none; box-shadow: none; }
+        .accent-switch {
+            display: inline-flex;
+            border: 1px solid #ddd;
+            border-radius: 18px;
+            overflow: hidden;
+        }
+        .accent-btn {
+            border: none;
+            background: #f5f5f5;
+            color: #666;
+            padding: 7px 12px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        .accent-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .speed-control {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            color: #888;
+        }
+        .speed-control input[type="range"] {
+            width: 80px;
+            accent-color: #667eea;
+        }
         .word-meaning {
             font-size: 20px;
             color: #333;
@@ -406,6 +457,19 @@
                 <input type="text" id="wordInput" placeholder="输入单词拼写..." autocomplete="off" autocapitalize="none" spellcheck="false">
             </div>
 
+            <div class="pronounce-controls">
+                <button class="btn-pronounce" id="pronounceBtn" onclick="speakWord()">🔊 发音</button>
+                <div class="accent-switch">
+                    <button class="accent-btn active" id="accentUS" onclick="setAccent('en-US')">🇺🇸 美</button>
+                    <button class="accent-btn" id="accentUK" onclick="setAccent('en-GB')">🇬🇧 英</button>
+                </div>
+                <div class="speed-control">
+                    <span>慢</span>
+                    <input type="range" id="speedRange" min="0.5" max="1.2" step="0.1" value="0.8" onchange="updateSpeed()" oninput="updateSpeed()">
+                    <span>快</span>
+                </div>
+            </div>
+
             <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">检查答案</button>
             <button class="btn btn-success" id="nextBtn" onclick="nextWord()">下一题 ➡</button>
             <div class="countdown" id="countdown">1.5秒后自动进入下一题...</div>
@@ -489,6 +553,36 @@
         let isAnswered = false;        // 当前题是否已答
         let autoNextTimer = null;      // 自动跳下一题的定时器
         let currentSection = 'primary';
+        let speechAccent = 'en-US';    // 发音口音：en-US 美式 / en-GB 英式
+        let speechRate = 0.8;          // 发音语速：0.5(慢) ~ 1.2(快)
+
+        // ====== 发音功能（Web Speech API，免费无需 Key） ======
+        function speakWord() {
+            if (!currentWord) return;
+            if (!('speechSynthesis' in window)) {
+                alert('当前浏览器不支持发音功能，请升级到较新版本的浏览器');
+                return;
+            }
+            window.speechSynthesis.cancel(); // 取消上一次未播完的
+            const utterance = new SpeechSynthesisUtterance(currentWord.word);
+            utterance.lang = speechAccent;
+            utterance.rate = speechRate;
+            utterance.pitch = 1.0;
+            const btn = document.getElementById('pronounceBtn');
+            btn.disabled = true;
+            btn.textContent = '🔊 播放中...';
+            utterance.onend = () => { btn.disabled = false; btn.textContent = '🔊 发音'; };
+            utterance.onerror = () => { btn.disabled = false; btn.textContent = '🔊 发音'; };
+            window.speechSynthesis.speak(utterance);
+        }
+        function setAccent(lang) {
+            speechAccent = lang;
+            document.getElementById('accentUS').classList.toggle('active', lang === 'en-US');
+            document.getElementById('accentUK').classList.toggle('active', lang === 'en-GB');
+        }
+        function updateSpeed() {
+            speechRate = parseFloat(document.getElementById('speedRange').value);
+        }
 
         // ====== 初始化 ======
         function init() {
