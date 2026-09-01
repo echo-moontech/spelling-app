@@ -311,9 +311,10 @@
             display: block;
         }
         .result-word {
-            font-size: 22px;
+            font-size: 34px;
             font-weight: bold;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
         }
         .result-detail {
             font-size: 13px;
@@ -777,7 +778,7 @@
                 resultDiv.className = 'result correct';
                 document.getElementById('resultWord').textContent = '✓ ' + currentWord.word;
                 document.getElementById('resultText').textContent = '回答正确！';
-                document.getElementById('resultDetail').textContent = currentWord.meaning;
+                document.getElementById('resultDetail').innerHTML = `<span style='font-size:15px'>${currentWord.meaning}</span>`;
 
                 // 从错题本移除
                 const wrongIndex = wrongWords.findIndex(w =>
@@ -796,8 +797,8 @@
                 // 答错
                 resultDiv.className = 'result wrong';
                 document.getElementById('resultWord').textContent = '✗ ' + currentWord.word;
-                document.getElementById('resultText').textContent = `你输入的是: ${inputRaw}`;
-                document.getElementById('resultDetail').textContent = '💡 记住正确拼写后，点击"下一题"继续';
+                document.getElementById('resultText').innerHTML = `<span style='font-size:15px'>你的答案: <del>${inputRaw}</del></span>`;
+                document.getElementById('resultDetail').innerHTML = `<span style='font-size:18px;font-weight:bold;color:#155724'>✅ 正确拼写：${currentWord.word}</span><br><span style='font-size:14px'>${currentWord.meaning}</span>`;
 
                 // 加入错题本
                 if (!wrongWords.find(w =>
