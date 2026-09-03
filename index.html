@@ -713,6 +713,17 @@
             refreshPool(); updateScopeLabel(); nextWord();
         }
 
+        // 拼写提示生成器：中文释义 → 字母骨架提示（如 eye → e_e）
+        function makeSpellingHint(word, meaning) {
+            if (!word || word.length < 2) return '';
+            const clean = word.replace(/[^a-zA-Z]/g, '');
+            if (clean.length === 0) return '';
+            if (clean.length <= 3) {
+                return clean[0] + '_'.repeat(clean.length - 2) + clean[clean.length - 1] + ' (' + clean.length + '个字母)';
+            }
+            return clean[0] + '_'.repeat(clean.length - 2) + clean[clean.length - 1] + ' (' + clean.length + '个字母)';
+        }
+
         let currentGrade = 1;
         let currentWord = null;
         let correctCount = 0;
@@ -886,7 +897,10 @@
             // 更新UI
             document.getElementById('wordGrade').textContent = gradeNames[currentGrade];
             document.getElementById('wordMeaning').textContent = currentWord.meaning;
-            document.getElementById('wordHint').textContent = currentWord.hint;
+            document.getElementById('wordHint').textContent =
+                (currentWord.hint && currentWord.hint !== currentWord.meaning)
+                    ? currentWord.hint
+                    : makeSpellingHint(currentWord.word, currentWord.meaning);
             document.getElementById('wordInput').value = '';
             document.getElementById('wordInput').focus();
 
