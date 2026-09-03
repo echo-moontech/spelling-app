@@ -734,7 +734,11 @@
             emojiImg.style.display = 'none';
             cartoonImg.style.display = 'none';
             
-            // 先尝试加载卡通图
+            // 先尝试加载卡通图（成功则显示，失败走 onerror emoji 兜底）
+            cartoonImg.onload = function() {
+                container.style.display = 'flex';
+                cartoonImg.style.display = 'block';
+            };
             cartoonImg.src = 'images/' + wordLower + '.png';
         }
 
