@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'spelling-app-v2';
+const CACHE_NAME = 'spelling-app-v3';
 const urlsToCache = [
     './',
     './index.html',
