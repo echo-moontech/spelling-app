@@ -1,5 +1,5 @@
 // Service Worker - 离线缓存
-const CACHE_NAME = 'spelling-app-v3';
+const CACHE_NAME = 'spelling-app-v4';
 const urlsToCache = [
     './',
     './index.html',
@@ -23,6 +23,7 @@ self.addEventListener('install', event => {
                 console.log('缓存已打开');
                 return cache.addAll(urlsToCache);
             })
+            .then(() => self.skipWaiting())  // 新 SW 跳过 waiting 阶段直接激活
     );
 });
 
