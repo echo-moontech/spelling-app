@@ -108,6 +108,48 @@
             background: #667eea;
             color: white;
         }
+        .textbook-selector {
+            margin-bottom: 15px;
+            padding: 12px;
+            background: linear-gradient(135deg, rgba(102,126,234,0.08), rgba(118,75,162,0.08));
+            border-radius: 12px;
+            border: 1px solid rgba(102,126,234,0.2);
+        }
+        .textbook-selector label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .textbook-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .textbook-row select {
+            padding: 8px 4px;
+            border: 1.5px solid #d0d7e8;
+            border-radius: 8px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+            color: #333;
+            min-width: 0;
+        }
+        .textbook-row select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102,126,234,0.2);
+        }
+        .scope-label {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #667eea;
+            text-align: center;
+            font-weight: 500;
+        }
+        }
         .stats {
             display: flex;
             justify-content: center;
@@ -423,6 +465,21 @@
             </div>
         </div>
 
+        <div class="textbook-selector">
+            <label>📚 教材范围（精确按单元）：</label>
+            <div class="textbook-row">
+                <select id="versionSelect" onchange="onSelectorChange()">
+                    <option value="all">全部教材</option>
+                    <option value="pep-primary">人教 PEP 小学</option>
+                    <option value="pep-junior">人教 PEP 初中</option>
+                </select>
+                <select id="gradeSelect2" onchange="onGrade2Change()"><option value="">全部年级</option></select>
+                <select id="bookSelect" onchange="onBookChange()"><option value="">全部册次</option></select>
+                <select id="unitSelect" onchange="onUnitChange()"><option value="">全部单元</option></select>
+            </div>
+            <div id="scopeLabel" class="scope-label">当前: 全部范围（默认）</div>
+        </div>
+
         <div class="tabs">
             <div class="tab active" onclick="switchTab('practice')">练习</div>
             <div class="tab" onclick="switchTab('wrong')">错题本 (<span id="wrongCount">0</span>)</div>
@@ -556,6 +613,106 @@
             10: "高一", 11: "高二", 12: "高三"
         };
 
+        // ====== 从 words.js 构建 wordDatabase[grade]（按年级分组，兼容老代码） ======
+        const wordDatabase = {};
+        words.forEach(w => {
+            if (!wordDatabase[w.grade]) wordDatabase[w.grade] = [];
+            wordDatabase[w.grade].push(w);
+        });
+
+        // ====== 四级教材选择器（版本→年级→册→单元） ======
+        let currentPool = [];
+
+        function refreshPool() {
+            let pool = wordDatabase[currentGrade] || [];
+            const version = document.getElementById('versionSelect').value;
+            const g2 = document.getElementById('gradeSelect2').value;
+            const b = document.getElementById('bookSelect').value;
+            const u = document.getElementById('unitSelect').value;
+            if (version === 'pep-primary') pool = pool.filter(w => w.grade >= 1 && w.grade <= 6);
+            else if (version === 'pep-junior') pool = pool.filter(w => w.grade >= 7 && w.grade <= 9);
+            if (g2) pool = pool.filter(w => String(w.grade) === String(g2));
+            if (b) pool = pool.filter(w => w.book === b);
+            if (u) pool = pool.filter(w => String(w.unit) === String(u));
+            currentPool = pool;
+            document.getElementById('wordCount').textContent = `当前词库：${pool.length} 个单词`;
+        }
+
+        function updateScopeLabel() {
+            const v = document.getElementById('versionSelect');
+            const g = document.getElementById('gradeSelect2');
+            const b = document.getElementById('bookSelect');
+            const u = document.getElementById('unitSelect');
+            const vt = v.options[v.selectedIndex].text;
+            const gt = g.options[g.selectedIndex].text;
+            const bt = b.options[b.selectedIndex].text;
+            const ut = u.options[u.selectedIndex].text;
+            document.getElementById('scopeLabel').textContent = `当前: ${vt} / ${gt} / ${bt} / ${ut} (共${currentPool.length}词)`;
+        }
+
+        function populateGrade2Select() {
+            const sel = document.getElementById('gradeSelect2');
+            sel.innerHTML = '<option value="">全部年级</option>';
+            [3,4,5,6,7,8,9].forEach(g => {
+                const opt = document.createElement('option');
+                opt.value = g;
+                opt.textContent = gradeNames[g] || (g + '年级');
+                sel.appendChild(opt);
+            });
+        }
+        function populateBookSelect() {
+            const sel = document.getElementById('bookSelect');
+            const g2 = document.getElementById('gradeSelect2').value;
+            sel.innerHTML = '<option value="">全部册次</option>';
+            let pool = g2 ? words.filter(w => String(w.grade) === String(g2)) : words;
+            let books = [...new Set(pool.map(w => w.book))].sort();
+            books.forEach(b => {
+                const opt = document.createElement('option');
+                opt.value = b;
+                opt.textContent = b;
+                sel.appendChild(opt);
+            });
+        }
+        function populateUnitSelect() {
+            const sel = document.getElementById('unitSelect');
+            const g2 = document.getElementById('gradeSelect2').value;
+            const b = document.getElementById('bookSelect').value;
+            sel.innerHTML = '<option value="">全部单元</option>';
+            let pool = words;
+            if (b) pool = pool.filter(w => w.book === b);
+            else if (g2) pool = pool.filter(w => String(w.grade) === String(g2));
+            let units = [...new Set(pool.map(w => w.unit))].sort((a,b)=>a-b);
+            units.forEach(u => {
+                const sample = pool.find(w => w.unit === u);
+                const label = sample && sample.unitName ? sample.unitName : ('Unit ' + u);
+                const opt = document.createElement('option');
+                opt.value = u;
+                opt.textContent = label;
+                sel.appendChild(opt);
+            });
+        }
+        function resetSelectors() {
+            document.getElementById('versionSelect').value = 'all';
+            document.getElementById('gradeSelect2').value = '';
+            document.getElementById('bookSelect').value = '';
+            document.getElementById('unitSelect').value = '';
+        }
+        function onSelectorChange() {
+            populateGrade2Select(); populateBookSelect(); populateUnitSelect();
+            refreshPool(); updateScopeLabel(); nextWord();
+        }
+        function onGrade2Change() {
+            populateBookSelect(); populateUnitSelect();
+            refreshPool(); updateScopeLabel(); nextWord();
+        }
+        function onBookChange() {
+            populateUnitSelect();
+            refreshPool(); updateScopeLabel(); nextWord();
+        }
+        function onUnitChange() {
+            refreshPool(); updateScopeLabel(); nextWord();
+        }
+
         let currentGrade = 1;
         let currentWord = null;
         let correctCount = 0;
@@ -599,6 +756,9 @@
         // ====== 初始化 ======
         function init() {
             renderGradeButtons();
+            populateGrade2Select();
+            populateBookSelect();
+            populateUnitSelect();
             loadStats();
             loadWrongWords();
             selectGrade(currentGrade);
@@ -663,8 +823,13 @@
                 }
             });
 
-            const wordCount = wordDatabase[grade] ? wordDatabase[grade].length : 0;
-            document.getElementById('wordCount').textContent = `当前词库：${wordCount} 个单词`;
+            // 同步四级选择器: 年级选项设为当前年级，其他重置
+            resetSelectors();
+            populateGrade2Select();
+            populateBookSelect();
+            populateUnitSelect();
+            refreshPool();
+            updateScopeLabel();
 
             nextWord();
         }
@@ -691,9 +856,9 @@
                 autoNextTimer = null;
             }
 
-            const words = wordDatabase[currentGrade];
+            const words = currentPool.length > 0 ? currentPool : (wordDatabase[currentGrade] || []);
             if (!words || words.length === 0) {
-                document.getElementById('wordMeaning').textContent = '词库加载中...';
+                document.getElementById('wordMeaning').textContent = '当前范围无词，请调整选择';
                 return;
             }
 
