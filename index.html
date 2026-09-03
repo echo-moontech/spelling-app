@@ -904,41 +904,48 @@
             document.getElementById('wordInput').value = '';
             document.getElementById('wordInput').focus();
 
-            // 显示单词配图（优先卡通图，失败则 emoji 兜底）
+            // 显示单词配图（双保险：emoji 立即显示 + 卡通图异步尝试）
             const container = document.getElementById('wordImage');
             const cartoonImg = document.getElementById('cartoonImg');
             const emojiImg = document.getElementById('emojiImg');
             const wordLower = currentWord.word.toLowerCase();
-            
+
             container.style.display = 'none';
             emojiImg.style.display = 'none';
             cartoonImg.style.display = 'none';
-            
-            // 先尝试加载卡通图（成功则显示，失败走 onerror emoji 兜底）
-            cartoonImg.onload = function() {
-                container.style.display = 'flex';
-                cartoonImg.style.display = 'block';
-            };
-            cartoonImg.src = 'images/' + wordLower + '.png';
-        }
+            emojiImg.textContent = '';
 
-        // 卡通图加载失败，改用 emoji 兜底
-        function showEmojiFallback() {
-            const wordLower = currentWord.word.toLowerCase();
-            const container = document.getElementById('wordImage');
-            const cartoonImg = document.getElementById('cartoonImg');
-            const emojiImg = document.getElementById('emojiImg');
-            
-            cartoonImg.style.display = 'none';
-            
-            // 检查是否有 emoji 映射
+            // 1️⃣ 先同步显示 emoji（不依赖 onerror，手机端更可靠）
             const emoji = emojiMap[wordLower];
             if (emoji) {
                 emojiImg.textContent = emoji;
                 emojiImg.style.display = 'block';
                 container.style.display = 'flex';
-            } else {
-                container.style.display = 'none';
+            }
+
+            // 2️⃣ 再异步尝试加载卡通图（成功则覆盖 emoji）
+            cartoonImg.onload = function() {
+                cartoonImg.style.display = 'block';
+                emojiImg.style.display = 'none';
+                container.style.display = 'flex';
+            };
+            cartoonImg.onerror = function() {
+                // 卡通图失败：emoji 已显示，无 emoji 则隐藏
+                if (!emoji) container.style.display = 'none';
+            };
+            cartoonImg.src = 'images/' + wordLower + '.png';
+        }
+
+        // 保留兼容：onerror 直接调用也走 emoji 兜底
+        function showEmojiFallback() {
+            const wordLower = currentWord.word.toLowerCase();
+            const container = document.getElementById('wordImage');
+            const emojiImg = document.getElementById('emojiImg');
+            const emoji = emojiMap[wordLower];
+            if (emoji && !emojiImg.textContent) {
+                emojiImg.textContent = emoji;
+                emojiImg.style.display = 'block';
+                container.style.display = 'flex';
             }
         }
 
