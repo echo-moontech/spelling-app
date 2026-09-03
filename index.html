@@ -62,52 +62,6 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .grade-selector {
-            margin-bottom: 15px;
-        }
-        .grade-selector label {
-            display: block;
-            margin-bottom: 6px;
-            color: #666;
-            font-size: 13px;
-        }
-        .grade-buttons {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 6px;
-        }
-        .grade-btn {
-            padding: 8px 4px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            font-size: 11px;
-            transition: all 0.2s;
-        }
-        .grade-btn.active {
-            border-color: #667eea;
-            background: #667eea;
-            color: white;
-        }
-        .grade-section {
-            font-size: 11px;
-            color: #999;
-            text-align: center;
-            margin-top: 5px;
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
-        .grade-section span {
-            cursor: pointer;
-            padding: 2px 10px;
-            border-radius: 10px;
-        }
-        .grade-section span.active {
-            background: #667eea;
-            color: white;
-        }
         .textbook-selector {
             margin-bottom: 15px;
             padding: 12px;
@@ -455,16 +409,6 @@
             <span id="offlineText">✓ 可离线使用</span>
         </div>
 
-        <div class="grade-selector">
-            <label>选择年级：</label>
-            <div class="grade-buttons" id="gradeButtons"></div>
-            <div class="grade-section" id="gradeSectionTabs">
-                <span class="active" onclick="filterBySection('primary')">小学</span>
-                <span onclick="filterBySection('middle')">初中</span>
-                <span onclick="filterBySection('high')">高中</span>
-            </div>
-        </div>
-
         <div class="textbook-selector">
             <label>📚 教材范围（精确按单元）：</label>
             <div class="textbook-row">
@@ -624,7 +568,8 @@
         let currentPool = [];
 
         function refreshPool() {
-            let pool = wordDatabase[currentGrade] || [];
+            // 从全部词开始按选择器逐层过滤（默认全选时有词）
+            let pool = words || [];
             const version = document.getElementById('versionSelect').value;
             const g2 = document.getElementById('gradeSelect2').value;
             const b = document.getElementById('bookSelect').value;
@@ -732,7 +677,7 @@
         let usedIndices = [];
         let isAnswered = false;        // 当前题是否已答
         let autoNextTimer = null;      // 自动跳下一题的定时器
-        let currentSection = 'primary';
+        let currentSection = 'primary'; // 保留变量以免其他代码报错（UI不再使用） // 预留状态位，已不再使用（被四级选择器取代）
         let speechAccent = 'en-US';    // 发音口音：en-US 美式 / en-GB 英式
         let speechRate = 0.8;          // 发音语速：0.5(慢) ~ 1.2(快)
 
@@ -766,13 +711,19 @@
 
         // ====== 初始化 ======
         function init() {
-            renderGradeButtons();
             populateGrade2Select();
             populateBookSelect();
             populateUnitSelect();
             loadStats();
             loadWrongWords();
-            selectGrade(currentGrade);
+            // 默认选中 PEP 小学三年级 3A Unit 1（开箱即用）
+            document.getElementById('versionSelect').value = 'pep-primary';
+            document.getElementById('gradeSelect2').value = '3';
+            document.getElementById('bookSelect').value = '3A';
+            document.getElementById('unitSelect').value = '1';
+            refreshPool();
+            updateScopeLabel();
+            nextWord();
             updateWrongCount();
 
             document.getElementById('wordInput').addEventListener('keypress', function(e) {
@@ -794,55 +745,6 @@
                     showCheckBtn();
                 }
             });
-        }
-
-        // ====== 渲染年级按钮 ======
-        function renderGradeButtons() {
-            const container = document.getElementById('gradeButtons');
-            let html = '';
-            for (let i = 1; i <= 12; i++) {
-                html += `<button class="grade-btn" data-grade="${i}" onclick="selectGrade(${i})">${i}</button>`;
-            }
-            container.innerHTML = html;
-        }
-
-        // ====== 学段筛选 ======
-        function filterBySection(section) {
-            currentSection = section;
-            document.querySelectorAll('#gradeSectionTabs span').forEach(s => s.classList.remove('active'));
-            event.target.classList.add('active');
-            const ranges = {
-                'primary': [1, 2, 3, 4, 5, 6],
-                'middle': [7, 8, 9],
-                'high': [10, 11, 12]
-            };
-            const validGrades = ranges[section];
-            if (!validGrades.includes(currentGrade)) {
-                selectGrade(validGrades[0]);
-            }
-        }
-
-        // ====== 选择年级 ======
-        function selectGrade(grade) {
-            currentGrade = grade;
-            usedIndices = [];
-
-            document.querySelectorAll('.grade-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if (parseInt(btn.dataset.grade) === grade) {
-                    btn.classList.add('active');
-                }
-            });
-
-            // 同步四级选择器: 年级选项设为当前年级，其他重置
-            resetSelectors();
-            populateGrade2Select();
-            populateBookSelect();
-            populateUnitSelect();
-            refreshPool();
-            updateScopeLabel();
-
-            nextWord();
         }
 
         // ====== 切换标签 ======
