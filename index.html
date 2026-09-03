@@ -62,6 +62,74 @@
             cursor: pointer;
             font-weight: bold;
         }
+
+        /* 版本更新横幅 */
+        .version-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 99999;
+            background: #e74c3c;
+            color: white;
+            text-align: center;
+            padding: 10px 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .version-banner button {
+            background: white;
+            color: #e74c3c;
+            border: none;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .version-banner button:hover {
+            background: #f0f0f0;
+        }
+        .version-banner .close-btn {
+            background: transparent;
+            color: rgba(255,255,255,0.8);
+            font-size: 18px;
+            padding: 0 6px;
+            margin-left: -4px;
+        }
+
+        /* 发音质检 */
+        .btn-qc {
+            background: linear-gradient(135deg, #f39c12, #e67e22);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-left: 8px;
+        }
+        .btn-qc:hover { opacity: 0.9; }
+        .qc-panel {
+            margin-top: 14px;
+            padding: 16px;
+            border-radius: 16px;
+            background: #fff8ef;
+            border: 2px solid #f39c12;
+        }
+        .qc-title { font-size: 15px; font-weight: bold; color: #d35400; margin-bottom: 8px; }
+        .qc-word { font-size: 28px; font-weight: bold; font-family: 'Courier New', monospace; letter-spacing: 3px; margin: 8px 0; color: #2c3e50; }
+        .qc-actions { display: flex; gap: 10px; flex-wrap: wrap; margin: 10px 0; }
+        .qc-actions button { border: none; padding: 10px 16px; border-radius: 12px; font-size: 15px; font-weight: bold; cursor: pointer; }
+        .qc-ok { background: #27ae60; color: white; }
+        .qc-bad { background: #e74c3c; color: white; }
+        .qc-stop { background: #95a5a6; color: white; }
+        .qc-result { font-size: 14px; color: #c0392b; margin-top: 10px; line-height: 1.6; }
         .textbook-selector {
             margin-bottom: 15px;
             padding: 12px;
@@ -396,6 +464,13 @@
     </style>
 </head>
 <body>
+    <!-- 版本更新横幅（由 JS 控制显示） -->
+    <div class="version-banner" id="versionBanner" style="display:none">
+        ⚠️ 检测到新版本！请清除缓存后刷新
+        <button onclick="forceRefresh()">强制刷新</button>
+        <span class="close-btn" onclick="dismissBanner()" style="cursor:pointer">✕</span>
+    </div>
+
     <div class="app-container">
         <h1>📝 单词拼写练习</h1>
 
@@ -481,6 +556,19 @@
                     <input type="range" id="speedRange" min="0.5" max="1.2" step="0.1" value="0.8" onchange="updateSpeed()" oninput="updateSpeed()">
                     <span>快</span>
                 </div>
+                <button class="btn-qc" id="qcBtn" onclick="startQC()">🔍 发音质检</button>
+            </div>
+
+            <!-- 发音质检面板（默认隐藏） -->
+            <div class="qc-panel" id="qcPanel" style="display:none">
+                <div class="qc-title">🔍 发音质检中 <span id="qcProgress"></span></div>
+                <div class="qc-word" id="qcWord"></div>
+                <div class="qc-actions">
+                    <button class="qc-ok" onclick="qcFeedback(true)">✓ 发音正确</button>
+                    <button class="qc-bad" onclick="qcFeedback(false)">✗ 发音错误</button>
+                    <button class="qc-stop" onclick="stopQC()">结束</button>
+                </div>
+                <div class="qc-result" id="qcResult"></div>
             </div>
 
             <button class="btn btn-primary" id="checkBtn" onclick="checkAnswer()">检查答案</button>
@@ -500,6 +588,39 @@
     <script src="words.js"></script>
     <script src="emojiMap.js"></script>
     <script>
+    // ========== 版本更新检测 ==========
+    const APP_VERSION = '20260903v3';
+    const STORED_VERSION_KEY = 'spelling_app_version';
+
+    function checkVersion() {
+        const stored = localStorage.getItem(STORED_VERSION_KEY);
+        if (stored !== APP_VERSION) {
+            // 首次安装或发现新版本 → 显示横幅
+            var banner = document.getElementById('versionBanner');
+            if (banner) banner.style.display = 'flex';
+        }
+        // 无论如何都更新本地版本记录
+        localStorage.setItem(STORED_VERSION_KEY, APP_VERSION);
+    }
+
+    function forceRefresh() {
+        // 清除所有缓存存储，强制刷新
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+        }
+        localStorage.removeItem(STORED_VERSION_KEY);
+        // 强制从网络重载（bypass CDN 缓存）
+        window.location.reload(true);
+    }
+
+    function dismissBanner() {
+        var banner = document.getElementById('versionBanner');
+        if (banner) banner.style.display = 'none';
+    }
+
+    // 页面加载时检查版本
+    document.addEventListener('DOMContentLoaded', checkVersion);
+
         // ====== PWA 安装 ======
         let deferredPrompt;
         window.addEventListener('beforeinstallprompt', (e) => {
@@ -681,6 +802,25 @@
         let speechAccent = 'en-US';    // 发音口音：en-US 美式 / en-GB 英式
         let speechRate = 0.8;          // 发音语速：0.5(慢) ~ 1.2(快)
 
+        // 语音列表缓存 + 自动挑选最清晰的语音（神经语音优先，避免 SPEAK 念成 SAY 这类 bug）
+        let cachedVoices = [];
+        function loadVoices() {
+            try { cachedVoices = window.speechSynthesis.getVoices() || []; } catch(e) { cachedVoices = []; }
+        }
+        if ('speechSynthesis' in window) {
+            loadVoices();
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+        function pickBestVoice() {
+            if (!cachedVoices.length) loadVoices();
+            const matched = cachedVoices.filter(v =>
+                v.lang === speechAccent || v.lang.toLowerCase().startsWith(speechAccent.toLowerCase()));
+            if (!matched.length) return null;
+            // 优先：Online/Neural 神经语音 > Zira/Aria/Samantha/Google 女声 > 任意匹配
+            const prefer = matched.find(v => /online|neural|zira|aria|samantha|google|natural/i.test(v.name));
+            return prefer || matched[0];
+        }
+
         // ====== 发音功能（Web Speech API，免费无需 Key） ======
         function speakWord() {
             if (!currentWord) return;
@@ -691,6 +831,8 @@
             window.speechSynthesis.cancel(); // 取消上一次未播完的
             const utterance = new SpeechSynthesisUtterance(currentWord.word);
             utterance.lang = speechAccent;
+            const bestVoice = pickBestVoice();
+            if (bestVoice) utterance.voice = bestVoice; // 用最清晰的语音，避免默认语音念错
             utterance.rate = speechRate;
             utterance.pitch = 1.0;
             const btn = document.getElementById('pronounceBtn');
@@ -707,6 +849,67 @@
         }
         function updateSpeed() {
             speechRate = parseFloat(document.getElementById('speedRange').value);
+        }
+
+        // ====== 发音质检模式（人工逐词听辨，记录发音疑似错误的词） ======
+        let qcActive = false;
+        let qcIndex = 0;
+        let qcWrong = [];
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(text);
+            u.lang = speechAccent;
+            const bv = pickBestVoice();
+            if (bv) u.voice = bv;
+            u.rate = speechRate;
+            u.pitch = 1.0;
+            window.speechSynthesis.speak(u);
+        }
+        function startQC() {
+            if (!currentPool.length) { alert('当前范围没有单词，请先选择教材/年级/册/单元'); return; }
+            qcActive = true;
+            qcIndex = 0;
+            qcWrong = [];
+            document.getElementById('qcPanel').style.display = 'block';
+            document.getElementById('qcResult').textContent = '';
+            qcPlayCurrent();
+        }
+        function qcPlayCurrent() {
+            const w = currentPool[qcIndex];
+            let txt = w.word + '  ' + (w.meaning || '');
+            if (w.ipa) txt += '  ' + w.ipa;
+            document.getElementById('qcWord').textContent = txt;
+            document.getElementById('qcProgress').textContent = '(' + (qcIndex + 1) + '/' + currentPool.length + ')';
+            speakText(w.word);
+        }
+        function qcFeedback(good) {
+            const w = currentPool[qcIndex];
+            if (!good) qcWrong.push(w.word + (w.meaning ? '（' + w.meaning + '）' : '') + (w.ipa ? ' ' + w.ipa : ''));
+            qcIndex++;
+            if (qcIndex >= currentPool.length) { qcFinish(); return; }
+            qcPlayCurrent();
+        }
+        function qcFinish() {
+            qcActive = false;
+            document.getElementById('qcProgress').textContent = '完成';
+            const r = document.getElementById('qcResult');
+            if (qcWrong.length === 0) {
+                r.innerHTML = '🎉 本范围全部发音正常！';
+            } else {
+                // 存入 localStorage 持久保存，方便日后统一核对
+                try {
+                    const prev = JSON.parse(localStorage.getItem('spelling_qc_bad') || '[]');
+                    const merged = [...new Set([...prev, ...qcWrong])];
+                    localStorage.setItem('spelling_qc_bad', JSON.stringify(merged));
+                } catch(e) {}
+                r.innerHTML = '⚠️ 以下 ' + qcWrong.length + ' 个词发音可能有问题（可对照音标 / 换语音再听）：<br>' + qcWrong.map(x => '• ' + x).join('<br>');
+            }
+        }
+        function stopQC() {
+            qcActive = false;
+            window.speechSynthesis.cancel();
+            document.getElementById('qcPanel').style.display = 'none';
         }
 
         // ====== 初始化 ======

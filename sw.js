@@ -45,6 +45,13 @@ self.addEventListener('activate', event => {
     return self.clients.claim();
 });
 
+// 接收页面消息
+self.addEventListener('message', event => {
+    if (event.data && event.data.type === 'SKIP_WAITING') {
+        self.skipWaiting();
+    }
+});
+
 // 拦截请求
 self.addEventListener('fetch', event => {
     event.respondWith(
